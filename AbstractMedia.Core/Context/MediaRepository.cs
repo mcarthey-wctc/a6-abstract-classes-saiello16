@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AbstractMedia.Core.Models;
 
 namespace AbstractMedia.Core.Context;
@@ -31,6 +32,13 @@ public class MediaRepository : IMediaRepository
 
         foreach (var media in _context.Media)
         {
+            // Check if the type and title match (case-insensitive)
+            if (string.Equals(media.Type, type, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(media.Title, title, StringComparison.OrdinalIgnoreCase))
+            {
+                // If a match is found, return the media item
+                return media;
+            }
         }
 
         // Your code ends here.
@@ -41,5 +49,17 @@ public class MediaRepository : IMediaRepository
     public IEnumerable<Media> GetAllMedia()
     {
         return _context.Media;
+    }
+
+    public IEnumerable<Media> SearchMedia(string title)
+    {
+        // Convert the input title to lowercase for case-insensitive comparison
+        string lowercaseTitle = title.ToLower();
+
+        // Perform a LINQ query to find all media items with a matching title
+        var matchingMedia = Media.Where(m => m.Title.ToLower().Contains(lowercaseTitle));
+
+        // Return the matching media items as a list
+        return matchingMedia.ToList();
     }
 }
