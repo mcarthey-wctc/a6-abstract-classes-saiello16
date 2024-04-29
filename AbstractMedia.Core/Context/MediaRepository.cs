@@ -50,4 +50,16 @@ public class MediaRepository : IMediaRepository
     {
         return _context.Media;
     }
+
+    public IEnumerable<Media> SearchMedia(string title)
+    {
+        // Convert the input title to lowercase for case-insensitive comparison
+        string lowercaseTitle = title.ToLower();
+
+        // Perform a LINQ query to find all media items with a matching title
+        var matchingMedia = Media.Where(m => m.Title.ToLower().Contains(lowercaseTitle));
+
+        // Return the matching media items as a list
+        return matchingMedia.ToList();
+    }
 }
