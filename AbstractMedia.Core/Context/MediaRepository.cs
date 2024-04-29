@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AbstractMedia.Core.Models;
 
 namespace AbstractMedia.Core.Context;
@@ -31,6 +32,13 @@ public class MediaRepository : IMediaRepository
 
         foreach (var media in _context.Media)
         {
+            // Check if the type and title match (case-insensitive)
+            if (string.Equals(media.Type, type, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(media.Title, title, StringComparison.OrdinalIgnoreCase))
+            {
+                // If a match is found, return the media item
+                return media;
+            }
         }
 
         // Your code ends here.

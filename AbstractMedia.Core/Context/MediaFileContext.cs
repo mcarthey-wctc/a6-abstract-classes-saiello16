@@ -102,16 +102,38 @@ public class MediaFileContext : IMediaContext
     // TODO: Implement the SaveDataToFile method
     private void SaveDataToFile(List<Media> media)
     {
-        // Instructions:
-        // 1. Loop through each media item in the 'media' list.
-        // 2. For each media item, convert its properties to a string format suitable for a CSV file.
-        //    - For example, if a media item has properties 'Type', 'Id', and 'Title', the string might look like "Movie,1,Toy Story".
-        //    - Note: You'll need to handle the 'Writers', 'Regions', and 'Genres' properties differently because they are arrays. You can join the elements of these arrays into a string with elements separated by a pipe character ('|').
-        // 3. Write these strings to the CSV file. Each string should be on a new line.
-        // 4. Make sure to include a header line at the top of the file with the names of the properties.
+        // Create a list to store the lines of data to be written to the file
+        var lines = new List<string>();
 
-        // Your code starts here.
+        // Add the header line
+        lines.Add("Type,Id,Title,Season,Episode,Writers,Format,Length,Regions,Genres");
 
-        // Your code ends here.
+        // Loop through each media item in the 'media' list
+        foreach (var item in media)
+        {
+            // Convert the media item's properties to a string format
+            string line;
+            switch (item)
+            {
+                case Movie movie:
+                    line = $"Movie,{movie.Id},{movie.Title},,,,{string.Join("|", movie.Genres)},,,";
+                    break;
+                case Show show:
+                    line = $"Show,{show.Id},{show.Title},{show.Season},{show.Episode},{string.Join("|", show.Writers)},,,";
+                    break;
+                case Video video:
+                    line = $"Video,{video.Id},{video.Title},,,,{video.Format},{video.Length},{string.Join("|", video.Regions)},";
+                    break;
+                default:
+                    throw new Exception("Unknown media type");
+            }
+
+            // Add the formatted string to the list of lines
+            lines.Add(line);
+        }
+
+        // Write the lines to the CSV file
+        File.WriteAllLines(_filePath, lines);
     }
+
 }
